@@ -9,3 +9,21 @@ export interface EventObject {
     blocktime: number;
     event: EventData[];
 }
+
+export interface BookData {
+    orderId: string;
+    quantity: string;
+    price: string;
+}
+
+export interface Order  {
+    side: number,
+    priceLots: number,
+    maxBaseLots: number,
+    maxQuoteLots: number,
+    clientOrderId: number,
+    orderType: number,
+    reduceOnly: boolean,
+    expiryTimestamp: number,
+    limit: number
+};

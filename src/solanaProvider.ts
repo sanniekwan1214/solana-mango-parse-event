@@ -2,7 +2,7 @@ import { PublicKey, Connection, Logs } from '@solana/web3.js';
 import { extractMangoEvent } from './extractMangoEvents';
 import fs from 'fs';
 
-async function solanaProvider() {
+export async function solanaProvider() {
     const rpcUrl = 'https://api.mainnet-beta.solana.com/';
     const connection = new Connection(rpcUrl);
     const mangoEvent = [];
@@ -10,9 +10,6 @@ async function solanaProvider() {
 
     const programId = new PublicKey('4MangoMjqJ2firMokCjjGgoK8d4MXcrgL7XJaL3w6fVg');
     try {
-        //const accountInfo = await connection.getAccountInfo(programId);
-        //const accountData = accountInfo?.data;
-
         const txSignatures = await connection.getConfirmedSignaturesForAddress2(programId, { limit: 3 });
         console.log("txSignatures ", txSignatures);
         
@@ -23,19 +20,17 @@ async function solanaProvider() {
             //console.log(`Transaction AccountKeys ${txSignature.signature}: `, tx.transaction.message.addressTableLookups[0].accountKey);
             console.log(`Transaction Message ${txSignature.signature}: `, tx.transaction.message);
             console.log(`Transaction Meta Log Msg ${txSignature.signature}: `, tx.meta.logMessages);
-
             let mangoEventSet = extractMangoEvent(txSignature.signature, tx.blockTime, tx.meta.logMessages);
             mangoEvent.push(mangoEventSet);
 
-            // Wait for 10 seconds before making the next query aviod rate limit exceeds
+            // Wait for 5 seconds before making the next query aviod rate limit exceeds
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
-        fs.writeFileSync('MangoEvents2.json', JSON.stringify(mangoEvent, null, 2));
+        fs.writeFileSync('./output/MangoEvents2.json', JSON.stringify(mangoEvent, null, 2));
     } catch (err : any){
         console.error(err);
         process.exit(1);
     }
 }
 
-solanaProvider()
 
