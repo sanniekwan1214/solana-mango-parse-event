@@ -1,16 +1,12 @@
-import { PublicKey, Connection, Logs } from '@solana/web3.js';
+import { PublicKey, Connection } from '@solana/web3.js';
 import { extractMangoEvent } from './extractMangoEvents';
 import fs from 'fs';
 
-export async function solanaProvider() {
-    const rpcUrl = 'https://api.mainnet-beta.solana.com/';
-    const connection = new Connection(rpcUrl);
+export async function solanaProvider(connection: Connection, programId: PublicKey) {
     const mangoEvent = [];
-    // Get the public key for the program account
 
-    const programId = new PublicKey('4MangoMjqJ2firMokCjjGgoK8d4MXcrgL7XJaL3w6fVg');
     try {
-        const txSignatures = await connection.getConfirmedSignaturesForAddress2(programId, { limit: 3 });
+        const txSignatures = await connection.getConfirmedSignaturesForAddress2(programId, { limit: parseInt(process.env.TX_LIMIT) });
         console.log("txSignatures ", txSignatures);
         
         for (const txSignature of txSignatures) {
@@ -24,9 +20,10 @@ export async function solanaProvider() {
             mangoEvent.push(mangoEventSet);
 
             // Wait for 5 seconds before making the next query aviod rate limit exceeds
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, parseInt(process.env.TX_QUERY_FREQUENCY)));
         }
-        fs.writeFileSync('./output/MangoEvents2.json', JSON.stringify(mangoEvent, null, 2));
+        const nowInSeconds = Math.floor(Date.now() / 1000);
+        fs.writeFileSync(`./output/MangoEvents${nowInSeconds}.json`, JSON.stringify(mangoEvent, null, 2));
     } catch (err : any){
         console.error(err);
         process.exit(1);
