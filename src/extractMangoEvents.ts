@@ -1,7 +1,7 @@
 import idl from './mangoIDL/mango_v4.json';
 import { EventObject } from './helpers/interface';
 import { MANGO_EVENT_BOOK_PREFIX, MANGO_EVENT_DATA_PREFIX, MANGO_EVENT_INSTRUCTTION_PREFIX, MANGO_EVENT_RETURN_PREFIX } from './helpers/constants';
-import { decodeData, decodeOrder } from './decode';
+import { decodeData, decodeOrder, decodeBase64ToU128 } from './decode';
 
 const arr_supportedInstruction = idl.instructions.map((instruction) => instruction.name.charAt(0).toUpperCase() + instruction.name.slice(1))
 //console.log("arr_supportedInstruction ", arr_supportedInstruction);
@@ -40,13 +40,15 @@ export function extractMangoEvent(txSignature: string, blockTime: number, logMes
         }
         else if (logMessage.startsWith(MANGO_EVENT_RETURN_PREFIX)) {
             mangoEventReturn = logMessage.slice(MANGO_EVENT_RETURN_PREFIX.length).trim();
-            targetEvent.return = mangoEventReturn;
+            const mangoEventReturnTrimAcc = mangoEventReturn.slice(process.env.MANGO_ACC.length).trim()
+            const decodeReturnTo1u28 = decodeBase64ToU128(mangoEventReturnTrimAcc)
+            targetEvent.return = decodeReturnTo1u28;
         }
         else if (logMessage.startsWith(MANGO_EVENT_DATA_PREFIX)) {
             mangoEventData = logMessage.slice(MANGO_EVENT_DATA_PREFIX.length).trim();
             const decodedDataHex = decodeData(mangoEventData);
             const decodedOrder= decodeOrder(decodedDataHex);
-            console.log(decodedOrder)
+            // console.log(decodedOrder)
             targetEvent.data = decodedOrder;
         }
         else if (targetEvent.event && (targetEvent.data || targetEvent.return)) {
@@ -65,7 +67,7 @@ export function extractMangoEvent(txSignature: string, blockTime: number, logMes
             };
 
         }
-        else if (targetEvent.event && targetEvent.data === "" && targetEvent.return === "") {
+        else if (targetEvent.event && targetEvent.data === "" && targetEvent.return === null) {
             events.push(targetEvent);
             // reset targetEvent with empty data and return values
             targetEvent = {
