@@ -183,7 +183,7 @@ Sample structure of the output
 ```
 
 # Short description
-*what i did*
+## *what i did*
 1. Setup redis for saving processed signatures to avoid duplication
 2. Connect the rpc of solana and use the solana api to get the transaction message logs
 3. Extract the mango event based on the IDL in mango_v4.json
@@ -191,22 +191,25 @@ Sample structure of the output
 5. Save to json format ./output/mangoevent{timestamp}.json
 6. Setup polling
 
-*challenges*
-1. I am new to solana api, and mango , so it is very new to me from the beginning.
-2. Even google about the information, it is less information that I can search
+## *challenges*
+1. I am new to solana api, and mango library, so it is chanllenging to me from the beginning.
+2. Even google-ed about the information, it is less information that I can search
 3. So eventually it is based on my understanding and try my best to understand it
 
-*learnings*
+## *learnings*
+
 Problem solving: 
-1. Break the problems one by one and step by step first
+1. Don't panic for new challenges. Break the problems one by one and step by step first
 2. Log everything to understand which part is needed
 3. Write a piece of code to achieve each part first, if everything runs smooth, then can enhance the code structure and improve the logic
 
 Solana and mango:
 1. learnt to search useful logs in solana network from the log
 2. learnt the rpc methods provided by solana
+3. learnt based on the log return and use it understand the mango library, for example, the log returns all the instruction which can be found in mango library
+4. although there is not too much information provided from the doc, based on the log provided which can break the concept step by step to understand the basic flow.
 
-*Short description of what you think Mango does*
+# *Short description of what you think Mango does*
 General:
 Mango is an open-source decentralized exchange built on the Solana blockchain. It is designed to offer fast and low-cost trading of cryptocurrencies and other digital assets.
 
@@ -222,7 +225,6 @@ For example:
 2. The account directory(src/accounts_ix): providing account handling including create, update, and delete Mango program accounts on the Solana blockchain.
 
 3. The orderbook directory (/src/state/orderbook): building and managing order books, which are used to match buy and sell orders for different trading pairs in a decentralized trading application built on the Mango platform.
-
 
 *MangoClient*: 
 Connect with the wallet to fund your margin account so that you can place orders
