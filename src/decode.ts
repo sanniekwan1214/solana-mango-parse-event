@@ -23,15 +23,32 @@ export const decodeOrder = (input: string): any => {
   const expiryTimestamp = buffer.readBigUInt64BE(23);
   const limit = buffer.readUInt8(31);
   orderArray.push({
-      side,
-      priceLots,
-      maxBaseLots,
-      maxQuoteLots,
-      clientOrderId: Number(clientOrderId),
-      orderType,
-      reduceOnly,
-      expiryTimestamp: Number(expiryTimestamp),
-      limit
+    side,
+    priceLots,
+    maxBaseLots,
+    maxQuoteLots,
+    clientOrderId: Number(clientOrderId),
+    orderType,
+    reduceOnly,
+    expiryTimestamp: Number(expiryTimestamp),
+    limit
   })
   return orderArray
 };
+
+export function decodeBase64ToU128(encoded: string): string {
+  // Decode the input from Base64
+  let buffer = Buffer.from(encoded, "base64");
+
+  if (buffer.length < 16) {
+    const paddedBuffer = Buffer.alloc(16, 0);
+    buffer.copy(paddedBuffer, 16 - buffer.length);
+    buffer = paddedBuffer;
+  }
+  // Convert the decoded bytes to a u128 in big-endian byte order
+  const low = buffer.readBigUInt64LE();
+  const high = buffer.readBigUInt64LE(8);
+  const result = ((high << BigInt(64)) + low).toString();
+
+  return result;
+}

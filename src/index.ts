@@ -21,7 +21,7 @@ const connection = new Connection(rpcUrl);
 // Get the public key for the program account
 const programId = new PublicKey(process.env.MANGO_ACC);
 
-// Poll every 20 seconds due to rate limit
+// Poll every 20(default) seconds due to rate limit
 setInterval(async () => {
     console.log("Wait every 20 seconds due to rate limit")
     solanaProvider(connection, programId, redisClient);
